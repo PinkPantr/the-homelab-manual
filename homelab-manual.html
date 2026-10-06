@@ -8,14 +8,14 @@
 <meta property="og:site_name" content="The Homelab Manual">
 <meta property="og:title" content="The Homelab Manual">
 <meta property="og:description" content="Turn a spare mini-PC into a private server that blocks ads, streams your media, and guards your passwords — one numbered step at a time. No prior experience needed.">
-<meta property="og:url" content="https://the-homelab-manual.netlify.app/">
-<meta property="og:image" content="https://the-homelab-manual.netlify.app/og.png">
+<meta property="og:url" content="https://pinkpantr.github.io/the-homelab-manual/">
+<meta property="og:image" content="https://pinkpantr.github.io/the-homelab-manual/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Homelab Manual">
 <meta name="twitter:description" content="A field manual for self-hosters — every numbered step from first boot to a full home server.">
-<meta name="twitter:image" content="https://the-homelab-manual.netlify.app/og.png">
+<meta name="twitter:image" content="https://pinkpantr.github.io/the-homelab-manual/og.png">
 <title>The Homelab Manual</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231A1B1E'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%23F2C230' font-family='monospace'%3E⌂%3C/text%3E%3C/svg%3E">
 </head>
@@ -9341,7 +9341,7 @@ pct enter 116                      <span class="c"># you are now INSIDE CT 116 �
 <div class="spread">
 <div class="col-a">
 <ol class="steps">
-<li><b>Check that the shared-media mount is there. The block after the wizard table already added it.</b> On the <b>Proxmox host</b> (the server, 192.168.1.220), run <code>pct config 116</code>. Look for a line that reads <code>mp0: /srv/media,mp=/data</code>. It is there? Then this step is done. <b>Do not run <code>pct set</code> again.</b> A second mount point on the same <code>/data</code> fails. The line is missing? Add it now with <code>pct set 116 -mp0 /srv/media,mp=/data</code>.</li>
+<li><b>Check that the shared-media mount is there. The block after the wizard table already added it.</b> On the <b>Proxmox host</b> (the server, 192.168.1.220), run <code>pct config 116</code>. Look for a line that reads <code>mp0: /srv/media,mp=/data</code>. It is there? Then this step is done. Running the same <code>pct set</code> line again does no harm. It writes the same line again. <b>Never use a different slot</b> (<code>-mp1</code>, for example) for the same <code>/data</code>. The line is missing? Add it now with <code>pct set 116 -mp0 /srv/media,mp=/data</code>.</li>
 <li>Restart the container, so that the mount goes live: <code>pct reboot 116</code>.</li>
 <li>Open a shell <b>inside CT 116</b>: <code>pct enter 116</code> on the host, or <code>ssh root@192.168.1.237</code> from your PC.</li>
 <li>Type the commands on the right in that container shell.</li>
@@ -10134,7 +10134,7 @@ pct enter 129                      <span class="c"># you are now INSIDE CT 129 �
 <p>Your music lives in the shared media folder on the host: <code>/srv/media/music</code>. You made it one time in <a href="#media-shared" data-t="media-shared">Ch. 40 · Shared storage first</a>. Bind-mount that shared folder into CT 129. The music then appears inside the container at <code>/data/music</code>. A music server can play only the files that it can see. Without this mount, it finds zero songs.</p>
 <p>This part has no buttons. The dialog <span class="menu">129 → Resources → Add → Mount Point</span> in the GUI only makes a new, empty storage volume. It cannot point at a folder on the host that exists already. The block after the wizard table adds the mount for you. Check it on the host. Then you go into the container.</p>
 <ol class="steps">
-<li><b>Check that the shared-media mount is already there.</b> On the <b>Proxmox host</b>, run <code>pct config 129</code>. Look for <code>mp0: /srv/media,mp=/data</code>. It is there? Then this step is done. <b>Do not run <code>pct set</code> again.</b> A second mount point on the same <code>/data</code> is refused. The line is really missing? Add it with <code>pct set 129 -mp0 /srv/media,mp=/data</code>. Then reboot the container with <code>pct reboot 129</code>.</li>
+<li><b>Check that the shared-media mount is already there.</b> On the <b>Proxmox host</b>, run <code>pct config 129</code>. Look for <code>mp0: /srv/media,mp=/data</code>. It is there? Then this step is done. Running the same <code>pct set</code> line again does no harm. It writes the same line again. <b>Never use a different slot</b> (<code>-mp1</code>, for example) for the same <code>/data</code>. The line is really missing? Add it with <code>pct set 129 -mp0 /srv/media,mp=/data</code>. Then reboot the container with <code>pct reboot 129</code>.</li>
 <li>Open a shell <b>inside CT 129</b>: <code>pct enter 129</code> on the host.</li>
 <li>Type the commands on the right <b>inside the container</b>. They make a folder for the database of Navidrome. They start Navidrome with your music mounted read-only.</li>
 </ol>
@@ -14553,13 +14553,14 @@ fail2ban-client status sshd        <span class="c"># who's currently banned</spa
 <img data-hlm-img="pve-ct-console-btn" width="177" height="66" alt="The container's Console button, which opens a login prompt.">
 <figcaption>The <span class="menu">&gt;_ Console</span> button of the CT opens a <code>login:</code> prompt, not a shell. Use <code>pct enter 103</code> from <span class="menu">homelab → &gt;_ Shell</span>.</figcaption>
 </figure>
+<p>One limit: a ban can only work if NPM sees the <b>real</b> address of the visitor. A port-forward on your router keeps it. A tunnel service shows the address of the tunnel, and then every visitor looks the same. The log then names the wrong address. Check a line in the log (see the optional walk-through) before you trust the jail.</p>
 <p>This part has no buttons. You type commands inside CT 103. The two files that it creates are ordinary text files, exactly like <code>jail.local</code> of the host. So the route with the file manager from <b>Protect SSH on the host</b> works here too. Connect to <code>192.168.1.224</code>. The files to create are <code>/etc/fail2ban/filter.d/npm-auth.conf</code> and <code>/etc/fail2ban/jail.d/npm.conf</code>. Each holds only the lines between its line <code>cat</code> and its closing marker <code>INI</code>. To install and to restart fail2ban still needs this shell.</p>
 <div class="spread">
 <div class="col-a">
 <ol class="steps">
 <li>Install fail2ban inside the container.</li>
 <li>Write a filter that recognises the log lines <code>401</code> and <code>403</code> of NPM.</li>
-<li>Write a jail that watches the access logs of NPM with that filter.</li>
+<li>Write a jail that watches the access logs of NPM with that filter. It bans in two places: in the firewall of the container, and in the chain of Docker, as the next notice explains.</li>
 <li>Restart fail2ban. Check that the new jail is listed.</li>
 </ol>
 </div>
@@ -14582,12 +14583,16 @@ maxretry = 5
 findtime = 10m
 bantime  = 1h
 ignoreip = 127.0.0.1/8 192.168.1.0/24 100.64.0.0/10
+action   = nftables-allports[name=npm-auth]
+           iptables-allports[name=npm-auth-docker, chain=DOCKER-USER]
 INI
 systemctl restart fail2ban
-fail2ban-client status npm-auth</pre>
+fail2ban-client status npm-auth
+iptables -S DOCKER-USER                  <span class="c"># must list a line that jumps to f2b-npm-auth-docker</span></pre>
 </figure>
 </div>
 </div>
+<div class="warning"><header>Warning — why the jail has two ban lines</header><div class="bd"><p>NPM runs in Docker. Docker sends the traffic for ports 80, 443 and 81 through its own path in the firewall. The default ban of fail2ban only guards the normal path. It blocks a service such as SSH. It does <b>not</b> block a port that Docker published. This was tested: with only the default ban, a banned address was still able to reach the NPM ports, and fail2ban showed the ban as active. The second line, <code>iptables-allports[... chain=DOCKER-USER]</code>, adds the ban to the chain that Docker reads first. Keep both lines. Do not remove the second one. Test that it works: <code>iptables -S DOCKER-USER</code> must show a line <code>-j f2b-npm-auth-docker</code>. To test a ban for real, run <code>fail2ban-client set npm-auth banip &lt;the IP of your PC&gt;</code>, try to open the NPM page from that PC, and unban with <code>fail2ban-client set npm-auth unbanip &lt;the IP of your PC&gt;</code>. You see the NPM page while banned? Then the ban does not work. See <b>When it goes wrong</b>.</p></div></div>
 <div class="notice"><header>Notice — match the log line to your app</header><div class="bd"><p>The line <code>failregex</code> above catches any <code>401</code> or <code>403</code> in the proxy log of NPM. This is a good net for general use. Leave it exactly as it is unless you have a reason not to. You want to ban one day on the failed-login line of one app instead? The optional walk-through below does it step by step. Whatever you change, test it with <code>fail2ban-client -t</code> before you rely on it.</p></div></div>
 <details class="supp"><summary>Optional — point the pattern at the own login line of one app</summary><div class="bd">
 <p>Skip this unless the general net above is not enough for you. It is the most fiddly task in the chapter. Take it slowly.</p>
@@ -14614,6 +14619,7 @@ fail2ban-client status npm-auth</pre>
 <dt>failregex = ^\[.*\] .* (401|403) .* \[Client &lt;HOST&gt;\]</dt><dd>Matches a log line that returns the status 401 (unauthorised) or 403 (forbidden). It records the address of the client in the field <code>[Client …]</code> of NPM. NPM writes a status of the cache and a status of the upstream ahead of the code of the response (<code>- - 401 -</code>). So the <code>.*</code> in the middle skips those two fields. Then the pattern looks for <code>401</code> or <code>403</code>.</dd>
 <dt>/etc/fail2ban/jail.d/npm.conf</dt><dd>A jail file in <code>jail.d/</code>, which fail2ban reads by itself. It ties the filter to a place for the log and to the settings of the ban.</dd>
 <dt>logpath = /opt/npm/data/logs/*_access.log</dt><dd>Points the jail at each access log of each proxy host of NPM at once. A new proxy host is then covered with no extra edits.</dd>
+<dt>action = nftables-allports[…] iptables-allports[… chain=DOCKER-USER]</dt><dd>Sets what a ban does. The first line blocks the address in the firewall of the container. That protects normal services. The second line adds the address to <code>DOCKER-USER</code>, the chain that Docker reads first. That protects the ports that Docker published (80, 443, 81). Docker installs <code>iptables</code> with it, so you need no extra package.</dd>
 <dt>maxretry = 5</dt><dd>Allows 5 requests that fail or are forbidden from one address in <code>findtime</code> before a ban. Web pages make several requests. So this is set a little higher than for SSH.</dd>
 <dt>fail2ban-client status npm-auth</dt><dd>Confirms that the new jail loaded. Shows any addresses that it banned.</dd>
 </dl>
@@ -14627,6 +14633,7 @@ fail2ban-client status npm-auth</pre>
 <li><b><code>fail2ban-client status sshd</code> returns <code>Sorry but the jail 'sshd' does not exist</code>, or the service refuses to start after you paste the configuration.</b> This almost always means a typo in <code>/etc/fail2ban/jail.local</code>. Test the configuration with <code>fail2ban-client -t</code>. Then read the exact error with <code>journalctl -u fail2ban -e</code>. That second command shows the log messages of the system. <code>journalctl</code> prints the log. <code>-u fail2ban</code> narrows it to the fail2ban service alone. <code>-e</code> jumps straight to the end, where the newest lines are. Fix the line at fault. Then run <code>systemctl restart fail2ban</code>.</li>
 <li><b>The log says that fail2ban banned an address, but that address still connects.</b> Check if the ban ever reached the firewall. A ban is only a rule of the firewall. On Debian 13, fail2ban writes its rules into the firewall called <b>nftables</b> by default. It marks each rule that it adds with the short tag <code>f2b</code>. So run <code>nft list ruleset</code>. It prints all the rules of the firewall. Add <code>| grep -i f2b</code> after it. This filters the output down to the lines that contain <code>f2b</code>. One or more lines come back? Then the block is really in place. Nothing comes back? Then fail2ban loaded its rules, but it does not block anything. The jail watches. The firewall is not touched. Read <code>journalctl -u fail2ban -e</code>. Look for a line that mentions the action of the ban. The usual cause on a new Debian is that the backend of the firewall is missing. Install it with <code>apt install -y nftables</code>. Then run <code>systemctl restart fail2ban</code> and run the check again. <b>Confirm that it enforces. Do not only confirm that it loaded.</b> <code>fail2ban-client status sshd</code> says that the jail is up. That proves only that the file of rules parsed. The proof that it enforces is a real entry in <code>nft list ruleset | grep -i f2b</code>. Older guides check with a different firewall tool, <code>iptables</code>. That applies to you only if you set <code>banaction = iptables-multiport</code> in the configuration on purpose. The steps in this chapter never do.</li>
 <li><b>Any <code>fail2ban-client</code> command prints <code>Failed to access socket path: /var/run/fail2ban/fail2ban.sock</code>.</b> The service does not run. Start it with <code>systemctl enable --now fail2ban</code>. Wait a second. Try again.</li>
+<li><b>The NPM jail bans an address, but that address can still open the NPM page.</b> The jail has only the default ban. Docker's published ports need the second line. Check <code>iptables -S DOCKER-USER</code>. It must show <code>-j f2b-npm-auth-docker</code>. It does not? Add the <code>action</code> lines from the listing in <b>Add a jail for an exposed web login</b>. Run <code>fail2ban-client -t</code>. Then run <code>systemctl restart fail2ban</code>.</li>
 <li><b>The NPM jail loads but never bans anyone.</b> First confirm that the path of the log is right. Run <code>ls /opt/npm/data/logs/</code> inside CT 103. Check that files that end in <code>_access.log</code> are listed. You can also just look at that folder in a file manager over SFTP, as <b>Protect SSH on the host</b> describes. The point is only to see that the files exist. Then make one login fail, on purpose. In a browser, open the login page of an app that you publish through NPM. Type a wrong password one time. Check the configuration again with <code>fail2ban-client -t</code>. Compare the fresh log line with your pattern. Use the optional walk-through in <b>Add a jail for an exposed web login</b>. A jail that stays empty usually means that the pattern does not match the real log line.</li>
 </ol>
 </div></section>
