@@ -38,7 +38,25 @@ This manual is the missing piece. It is one source, well written, in order, and 
 
 The text follows the rules of ASD-STE100 (Simplified Technical English), to about 80%: short sentences, one action in each step, active voice, plain words, and the same word for the same thing. Every chapter was read by hand. Wrong facts and steps that a beginner would fail were fixed.
 
-Some steps were not tested on a live server. If a step does not work for you, open an issue. Say which chapter and which step.
+Most commands were run on a real Proxmox server while the Manual was written and reviewed. Some were not. If a step does not work for you, [open an issue](../../issues/new/choose). Say which chapter and which step.
+
+### What was tested, and what was not
+
+Tested on a live server: the setup of fail2ban, WatchYourLAN, the Grafana stack, Speedtest Tracker, Dockge, Watchtower, Fireshare, FlareSolverr, the Valheim server (start, backup and restore), the Nextcloud AIO master container, and a Home Assistant OS virtual machine.
+
+**Not tested yet.** Treat these steps with care, and tell us if they fail:
+
+- Frigate with a real camera, and GPU or iGPU passthrough.
+- Tailscale subnet routes and exit nodes.
+- Router steps: port forwards, DHCP reservations, DNS changes.
+- Alerts that reach your phone through ntfy (the commands to send them are tested; the full path to a phone is not).
+- Starting the full Nextcloud stack after the AIO master container, and the file permissions it sets.
+- The Valheim script that copies backups to your PC, and joining a server from outside your home.
+- Zigbee USB devices and add-ons in Home Assistant.
+- The Lidarr metadata server, and the Suwayomi connection to FlareSolverr.
+- The Cyberduck file-transfer steps on Mac and Windows.
+
+One chapter, Valheim, has no "field-checked" stamp yet, for the reasons above.
 
 ## Files in this repository
 
