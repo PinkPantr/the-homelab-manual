@@ -6931,15 +6931,15 @@ Home Assistant is a private version of the routines of Google Home or Alexa. One
 <figure class="listing on-host">
 <figcaption><span class="kbd">⌨</span> Type this on the Proxmox host (homelab)
 <button class="copy" type="button">Copy</button></figcaption>
-<div class="notice subst"><p><b>Before you run anything on this page:</b> every <code>192.168.1.x</code> address below is this manual's example network. If your own network uses different numbers, substitute yours as you type — the rule is in <a href="#a03-howto" data-t="a03-howto">Ch. 3 · How to read this manual</a>. A command that runs with the wrong address usually succeeds and leaves you unreachable.</p></div><pre>unxz haos_ova-18.1.qcow2.xz          <span class="c"># extract first — if "unxz: command not found", run apt install -y xz-utils</span>
-qm importdisk 130 haos_ova-18.1.qcow2 local-lvm   <span class="c"># import it as VM 130's disk</span></pre>
+<div class="notice subst"><p><b>Before you run anything on this page:</b> every <code>192.168.1.x</code> address below is this manual's example network. If your own network uses different numbers, substitute yours as you type — the rule is in <a href="#a03-howto" data-t="a03-howto">Ch. 3 · How to read this manual</a>. A command that runs with the wrong address usually succeeds and leaves you unreachable.</p></div><pre>unxz haos_ova-18.3.qcow2.xz          <span class="c"># extract first — if "unxz: command not found", run apt install -y xz-utils</span>
+qm importdisk 130 haos_ova-18.3.qcow2 local-lvm   <span class="c"># import it as VM 130's disk</span></pre>
 </figure>
 </div>
 </div>
 <details class="supp"><summary>Explanation of each command</summary>
 <div class="bd"><dl class="explain">
-<dt>unxz haos_ova-18.1.qcow2.xz</dt><dd>Decompresses the downloaded image. The <code>.xz</code> download is a compressed archive. This leaves the plain <code>.qcow2</code> disk image next to it. You import that plain file. Never import the <code>.xz</code>.</dd>
-<dt>qm importdisk 130 haos_ova-18.1.qcow2 local-lvm</dt><dd>The Proxmox command that turns the downloaded disk image into a real disk for VM 130. It stores the disk on <code>local-lvm</code>. Use your own storage name if it is different. The disk shows as <em>Unused Disk 0</em> until you attach it in the Hardware tab. Newer versions of Proxmox write the same command as <code>qm disk import 130 haos_ova-18.1.qcow2 local-lvm</code>. Both work.</dd>
+<dt>unxz haos_ova-18.3.qcow2.xz</dt><dd>Decompresses the downloaded image. The <code>.xz</code> download is a compressed archive. This leaves the plain <code>.qcow2</code> disk image next to it. You import that plain file. Never import the <code>.xz</code>.</dd>
+<dt>qm importdisk 130 haos_ova-18.3.qcow2 local-lvm</dt><dd>The Proxmox command that turns the downloaded disk image into a real disk for VM 130. It stores the disk on <code>local-lvm</code>. Use your own storage name if it is different. The disk shows as <em>Unused Disk 0</em> until you attach it in the Hardware tab. Newer versions of Proxmox write the same command as <code>qm disk import 130 haos_ova-18.3.qcow2 local-lvm</code>. Both work.</dd>
 </dl></div></details>
 <h3>ATTACH THE DISK AND SET THE BOOT ORDER</h3>
 <p>Back to the mouse. An imported disk does nothing until you attach it and put it first in the boot order.</p>
@@ -7053,7 +7053,7 @@ qm importdisk 130 haos_ova-18.1.qcow2 local-lvm   <span class="c"># import it as
 <ul class="trouble">
 <li><b>VM 130 does not start at all, or it starts but everything inside it is very slow.</b> The BIOS of the host has hardware virtualization turned off. Reboot the physical machine. Enter its BIOS setup. Turn on <b>Intel VT-x</b> (or <b>AMD-V</b> / <b>SVM Mode</b> on AMD boards). The exact name and menu place are different for each motherboard. Proxmox needs this switch to run VMs at real speed. Without it, a VM may refuse to start, or run so slowly that it looks frozen.</li>
 <li><b>VM 130 starts but shows a black screen, "No bootable device", or keeps rebooting. It never reaches Home Assistant.</b> The VM is on the wrong firmware, or its EFI disk has Secure Boot keys. HAOS boots only under UEFI, with Secure Boot keys off. Shut the VM down. Then run one command on the host: <code>qm set 130 --bios ovmf --efidisk0 local-lvm:1,efitype=4m,pre-enrolled-keys=0</code>. The parts of the command: <code>--bios ovmf</code> switches the firmware type to UEFI. <code>--efidisk0 local-lvm:1,...</code> makes the small EFI disk that UEFI needs, 1&nbsp;GB on the <code>local-lvm</code> storage. <code>efitype=4m</code> picks the modern, larger format of EFI variables. <code>pre-enrolled-keys=0</code> leaves the Secure Boot keys out. The EFI disk exists already? Then the command replaces it with a new one. Together this is what the <b>System</b> tab of the wizard does for a new machine. Start the VM again. You can also delete VM 130 and run the wizard again with <b>Firmware</b> set to <b>OVMF (UEFI)</b> and Pre-Enroll keys unticked. That costs only the import.</li>
-<li><b><code>qm importdisk</code> fails, or it imports a tiny or garbage disk that does not boot.</b> You pointed it at the download that is still compressed. Extract it first on the host with <code>unxz haos_ova-18.1.qcow2.xz</code>. Then run <code>qm importdisk 130 haos_ova-18.1.qcow2 local-lvm</code> (use your real storage name if it is not <code>local-lvm</code>).</li>
+<li><b><code>qm importdisk</code> fails, or it imports a tiny or garbage disk that does not boot.</b> You pointed it at the download that is still compressed. Extract it first on the host with <code>unxz haos_ova-18.3.qcow2.xz</code>. Then run <code>qm importdisk 130 haos_ova-18.3.qcow2 local-lvm</code> (use your real storage name if it is not <code>local-lvm</code>).</li>
 <li><b>The import works and the VM exists, but at start it powers on with nothing to boot.</b> The imported disk is still "Unused", or it is not in the boot order. Go to <span class="menu">VM 130 &rarr; Hardware</span>. Double-click <b>Unused Disk 0</b> and add it (SCSI or SATA is fine). Then go to <span class="menu">VM 130 &rarr; Options &rarr; Boot Order</span>. Tick that disk. Drag it to the top.</li>
 <li><b><code>http://192.168.1.251:8123</code> does not load after the VM boots.</b> HAOS uses DHCP. So it is on a different IP, or the first boot is not finished. Or both. Wait 5&ndash;10 minutes. Then open <code>http://homeassistant.local:8123</code>. To find the real IP, open <span class="menu">VM 130 &rarr; Console</span>. The address is printed on that screen. Then add a DHCP reservation on the router to pin it to <code>192.168.1.251</code>.</li>
 <li><b>The Zigbee2MQTT add-on installs but does not start, or its logs say that it cannot connect to MQTT.</b> Zigbee2MQTT needs a broker. Install the <b>Mosquitto broker</b> add-on first (<span class="menu">Settings &rarr; Add-ons &rarr; Add-on Store &rarr; Mosquitto broker</span>). Start it. Add the Mosquitto integration. Then start Zigbee2MQTT. Or skip MQTT and use the built-in <b>ZHA</b> integration instead.</li>
@@ -9936,7 +9936,7 @@ pct enter 128                      <span class="c"># you are now INSIDE CT 128 �
 <figcaption><span class="kbd">⌨</span> Type this inside CT 128
 <button class="copy" type="button">Copy</button></figcaption>
 <pre>apt update &amp;&amp; apt install -y docker.io curl
-docker run -d --name nextcloud-aio-mastercontainer --restart=unless-stopped \
+docker run -d --init --name nextcloud-aio-mastercontainer --restart=unless-stopped \
   -p 80:80 -p 8080:8080 -p 8443:8443 \
   -v nextcloud_aio_mastercontainer:/mnt/docker-aio-config \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
@@ -9949,6 +9949,7 @@ docker run -d --name nextcloud-aio-mastercontainer --restart=unless-stopped \
 <details class="supp"><summary>Explanation of each part</summary><div class="bd">
 <p>The Docker install line and the flags <code>-d</code>, <code>--name</code>, <code>--restart</code>, <code>-v</code>, <code>-p</code>, and <code>-e</code> are explained in <a href="#ssh" data-t="ssh">Ch. 9 · SSH &amp; the terminal</a>. These parts are specific to Nextcloud AIO:</p>
 <dl class="explain">
+<dt>--init</dt><dd>Runs a small init program inside the container. It cleans up processes that end and stay as zombies. The official Nextcloud instructions use it. The app also ran without it in a test, but keep it.</dd>
 <dt>--name nextcloud-aio-mastercontainer</dt><dd>Gives the container a name that you can use later, for example <code>docker stop nextcloud-aio-mastercontainer</code>. AIO also needs this exact name to find itself.</dd>
 <dt>-p 80:80 -p 8080:8080 -p 8443:8443</dt><dd>Opens the three ports that the AIO installer needs. Port 8080 is the setup web page that you open. It has a self-signed certificate. Port 80 is used later to get a free Let's Encrypt certificate. Port 8443 serves the same setup page over a trusted certificate when you set up a domain. Keep all three.</dd>
 <dt>-v nextcloud_aio_mastercontainer:/mnt/docker-aio-config</dt><dd>Stores the configuration of the app in a named volume that Docker manages. It is mounted at /mnt/docker-aio-config. The settings stay when it restarts.</dd>
@@ -9997,7 +9998,7 @@ docker run -d --name nextcloud-aio-mastercontainer --restart=unless-stopped \
 <ol class="steps">
 <li>Stop and remove the old master container: <code>docker stop nextcloud-aio-mastercontainer &amp;&amp; docker rm nextcloud-aio-mastercontainer</code>.</li>
 <li>Run the full <code>docker run</code> command again with one line added:
-<pre>docker run -d --name nextcloud-aio-mastercontainer --restart=unless-stopped \
+<pre>docker run -d --init --name nextcloud-aio-mastercontainer --restart=unless-stopped \
   -p 80:80 -p 8080:8080 -p 8443:8443 \
   -v nextcloud_aio_mastercontainer:/mnt/docker-aio-config \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
@@ -10012,7 +10013,7 @@ docker run -d --name nextcloud-aio-mastercontainer --restart=unless-stopped \
 <li><b>AIO reports that the data directory <code>/data/files</code> is "not writable", or permission is denied when it makes files.</b> An unprivileged LXC maps the root of the container to host UID 100000. So the bind-mounted folder must belong to that UID. On the Proxmox host, run <code>chown -R 100000:100000 /srv/media/files</code>. Then try the setup step again.</li>
 <li><b>You reboot CT 128 or the whole server, and Nextcloud cannot be reached, although the master container runs.</b> Only the master container restarts by itself. The Nextcloud stack stays stopped until you start it. Open the AIO interface at <code>https://192.168.1.249:8080</code>. Click <b>Start containers</b>. Turn on the option for the daily backup and the automatic update there. The stack then starts by itself after future reboots.</li>
 <li><b>The <code>docker run</code> command fails with "port is already allocated" or "address already in use".</b> Another program in CT 128 already holds port 80, 8080, or 8443. In a container of its own, this is rare. Find the holder with <code>docker ps</code>. Remove any earlier try (<code>docker rm -f nextcloud-aio-mastercontainer</code>) before you run the command again. The <code>-f</code> removes it by force, also while it runs. Your files and settings are not touched. They live in the shared media folder and in the named volume. They are not in the container itself. Port 8080 is really taken? Then map the AIO page to a free host port. Change that one line. Run the full command again:
-<pre>docker run -d --name nextcloud-aio-mastercontainer --restart=unless-stopped \
+<pre>docker run -d --init --name nextcloud-aio-mastercontainer --restart=unless-stopped \
   -p 80:80 -p 8081:8080 -p 8443:8443 \
   -v nextcloud_aio_mastercontainer:/mnt/docker-aio-config \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
@@ -11668,9 +11669,18 @@ ls -lh ~/valheim-backups</pre>
 <pre>ls -lt /backups | head
 unzip -l /backups/PICK-A-FILE.zip | head -20</pre>
 </figure>
-<p>Read the <code>unzip -l</code> output. If the file names start with <code>worlds_local/</code>, use the first block. If they do not, use the second block.</p>
+<p>Read the <code>unzip -l</code> output. This image writes names that start with <code>config/worlds_local/</code> (tested). Use the first block for them. A zip with names that start with <code>worlds_local/</code> needs the second block. A zip with any other names needs the third block. A wrong block puts the world in the wrong folder. The server then does not find it, and it starts an empty new world.</p>
 <figure class="listing on-ct">
-<figcaption><span class="kbd">⌨</span> Files start with <code>worlds_local/</code> — type this inside CT 148
+<figcaption><span class="kbd">⌨</span> Files start with <code>config/worlds_local/</code> — type this inside CT 148
+<button class="copy" type="button">Copy</button></figcaption>
+<pre>docker stop valheim
+mv /opt/valheim/config/worlds_local /opt/valheim/config/worlds_local.broken
+unzip /backups/PICK-A-FILE.zip -d /opt/valheim/
+ls -R /opt/valheim/config/worlds_local | head
+docker start valheim</pre>
+</figure>
+<figure class="listing on-ct">
+<figcaption><span class="kbd">⌨</span> Files start with <code>worlds_local/</code> — type this inside CT 148 (second block)
 <button class="copy" type="button">Copy</button></figcaption>
 <pre>docker stop valheim
 mv /opt/valheim/config/worlds_local /opt/valheim/config/worlds_local.broken
@@ -11679,7 +11689,7 @@ ls -R /opt/valheim/config/worlds_local | head
 docker start valheim</pre>
 </figure>
 <figure class="listing on-ct">
-<figcaption><span class="kbd">⌨</span> Files do not start with <code>worlds_local/</code> — type this inside CT 148
+<figcaption><span class="kbd">⌨</span> Files start with other names — type this inside CT 148 (third block)
 <button class="copy" type="button">Copy</button></figcaption>
 <pre>docker stop valheim
 mv /opt/valheim/config/worlds_local /opt/valheim/config/worlds_local.broken
