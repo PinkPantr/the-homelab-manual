@@ -62,6 +62,17 @@ Tested on a live server: the setup of fail2ban, WatchYourLAN, the Grafana stack,
 
 The Manual uses a made-up home: a server called `homelab`, a private network `192.168.1.x`, a 500 GB SSD, and 16 GB of RAM. Your own addresses will be different. The chapter on networking shows how to find them.
 
+## Credits
+
+Written by PinkPantr together with **Claude** (Anthropic), as co-author.
+
+- Claude helped write the chapters and rewrote the text in simple English.
+- Claude read all 78 chapters, fixed wrong facts, and tested commands on a test server.
+- Claude built the website and the checks that guard its quality.
+- PinkPantr set the goals, made the decisions, and approved every change.
+
+Commits that Claude worked on carry a `Co-Authored-By` line. If you share or adapt the Manual, please credit both: "The Homelab Manual, by PinkPantr and Claude (Anthropic), CC BY 4.0."
+
 ## License
 
 The text and the images are shared under [Creative Commons Attribution 4.0](LICENSE) (CC BY 4.0). You may share and adapt them. You must give credit.
