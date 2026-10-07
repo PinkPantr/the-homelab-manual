@@ -73,6 +73,10 @@ Written by PinkPantr together with **Claude** (Anthropic), as co-author.
 
 Commits that Claude worked on carry a `Co-Authored-By` line. If you share or adapt the Manual, please credit both: "The Homelab Manual, by PinkPantr and Claude (Anthropic), CC BY 4.0."
 
+## Privacy
+
+This site counts visits with [GoatCounter](https://www.goatcounter.com/). It uses no cookies and stores no personal data. It shows the site owner how many people visit, and which chapters they open. Ad blockers can stop it.
+
 ## License
 
 The text and the images are shared under [Creative Commons Attribution 4.0](LICENSE) (CC BY 4.0). You may share and adapt them. You must give credit.
